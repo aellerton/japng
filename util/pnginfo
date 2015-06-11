@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+__usage__="""pnginfo <filename> ...
+
+Simple text dump of PNG chunks.
+
+"""
+import sys
+import struct
+
+def die(message):
+  sys.stderr.write(message+'\n');
+  sys.exit(1)
+
+def die_usage(message):
+  die(__usage__+message)
+
+try:
+  import png
+except ImportError:
+  die("pypng is not installed. Try 'pip install pypng'")
+
+class PngType(object):
+  def __init__(self, code, name, valid_bit_depths, desc):
+    self.code = code
+    self.name = name
+    self.valid_bit_depths = valid_bit_depths
+    self.desc = desc
+
+  def __str__(self):
+    return "%s (%s) '%s'" % (self.name, self.code, self.desc)
+
+colour_types=[
+  PngType(0, "Greyscale", [1, 2, 4, 8, 16], "Each pixel is a greyscale sample"),
+  PngType(1, "INVALID", None, "1 is an invalid colour type"),
+  PngType(2, "Truecolour", [2, 8, 16], "Each pixel is an R, G, B triple"),
+  PngType(3, "Index-Colour", [1, 2, 4, 8], "Each pixel is a palette index, a PLTE chunk shall appear"),
+  PngType(4, "Greyscale with alpha", [4, 8, 16], "Each pixel is a greyscale sample followed by an alpha sample"),
+  PngType(5, "INVALID", None, "5 is an invalid colour type"),
+  PngType(6, "Trucolour with alpha", [8, 16], "Each pixel is an R, G, B triple followed by an alpha sample"),
+]
+
+def png_info(filename):
+  reader = png.Reader(filename)
+  for code, data in reader.chunks():
+    if code == 'IHDR':
+      width, height, bit_depth, colour_type, compression_method, filter_method, interlace_method = struct.unpack("!IIBBBBB", data)  # sizeof==13=ihdr
+      t = colour_types[colour_type]
+      print("%s: IHDR chunk: width=%s height=%s bit_depth=%s type=%s interlace=%s" % 
+        (filename, width, height, bit_depth, t, interlace_method))
+
+    elif code == 'acTL':
+      num_frames, num_plays = struct.unpack("!II", data)
+      print("%s: acTL chunk: %d frames, %d plays" % (filename, num_frames, num_plays))
+
+    elif code == 'fcTL':
+      seq_num, width, height, xoff, yoff, delay_num, delay_den, dispose_op, blend_op = struct.unpack("!IIIIIHHBB", data)
+      print("%s: fcTL chunk: seq=%s  width=%s  height=%s  xoff=%s  yoff=%s  delay_num=%s  delay_den=%s  dispose=%s blend=%s" % (filename, seq_num, width, height, xoff, yoff, delay_num, delay_den, dispose_op, blend_op))
+
+    else:
+      print("%s: %s chunk (%d bytes)" % (filename, code, len(data)))
+
+
+if __name__ == "__main__":
+  args = sys.argv[1:]
+  if not args:
+    die_usage("No files specified")
+  for arg in args:
+    png_info(arg)
+
+

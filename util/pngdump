@@ -1,0 +1,142 @@
+#!/usr/bin/env python
+"""Read a given PNG file using libpng (via Python) and dump as hex RGB or ARGB text.
+
+Used to build the text versions of the PNG Suite images for unit testing.
+"""
+import argparse
+import sys
+import struct
+from cStringIO import StringIO
+
+args_parser = argparse.ArgumentParser(description='Display information about a PNG file')
+args_parser.add_argument('--info', '-i', help='dump basic image info', action='store_true')
+args_parser.add_argument('--hexrgb', help='dump the image as hex (RGB) colours', action='store_true')
+args_parser.add_argument('--hexargb', help='dump the image as hex (ARGB) colours', action='store_true')
+args_parser.add_argument('--verbose', '-v', action='count')
+args_parser.add_argument('filenames', nargs='+', help='filename(s) to load')
+
+def die(message):
+  sys.stderr.write(message+'\n');
+  sys.exit(1)
+
+def die_usage(message):
+  args_parser.print_help()
+  die('\n'+message)
+
+try:
+  from PIL import Image
+except ImportError:
+  die_usage("Pillow (or PIL) is not installed. Try pip install Pillow")
+
+def file_opener(filenames):
+  def inner():
+    for filename in filenames:
+      if options.verbose > 2: print("%s: opening" % filename)
+      f = open(filename, 'rb')
+      yield f
+      if options.verbose > 2: print("%s: closing" % filename)
+      f.close()
+  return inner
+
+pil_argb_formatters = {
+  '1': lambda c: "FF%02X%02X%02X" % (c, c, c),  # L (8-bit pixels, black and white)
+  'L': lambda c: "FF%02X%02X%02X" % (c, c, c),  # L (8-bit pixels, black and white)
+  'LA': lambda c: "%02X%02X%02X%02X" % (c[1], c[0], c[0], c[0]),  # LA (grey and then alpha, 8-bit each)
+   #P (8-bit pixels, mapped to any other mode using a color palette)
+  'RGB': lambda c: "FF%02X%02X%02X" % (c[0], c[1], c[2]),  # (3x8-bit pixels, true color)
+  'RGBA': lambda c: "%02X%02X%02X%02X" % (c[3], c[0], c[1], c[2]),  # (4x8-bit pixels, true color with transparency mask)
+  #CMYK (4x8-bit pixels, color separation)
+  #YCbCr (3x8-bit pixels, color video format)
+  #LAB (3x8-bit pixels, the L*a*b color space)
+  #HSV (3x8-bit pixels, Hue, Saturation, Value color space)
+  #I (32-bit signed integer pixels)
+  #F (32-bit floating point pixels)
+}
+
+pil_rgb_formatters = {
+  '1': lambda c: "%02X%02X%02X" % (c, c, c),  # L (8-bit pixels, black and white)
+  'L': lambda c: "%02X%02X%02X" % (c, c, c),  # L (8-bit pixels, black and white)
+   #P (8-bit pixels, mapped to any other mode using a color palette)
+  'RGB': lambda c: "%02X%02X%02X" % (c[0], c[1], c[2]),  # (3x8-bit pixels, true color)
+  'RGBA': lambda c: "%02X%02X%02X" % (c[0], c[1], c[2]),  # (4x8-bit pixels, true color with transparency mask)
+  #CMYK (4x8-bit pixels, color separation)
+  #YCbCr (3x8-bit pixels, color video format)
+  #LAB (3x8-bit pixels, the L*a*b color space)
+  #HSV (3x8-bit pixels, Hue, Saturation, Value color space)
+  #I (32-bit signed integer pixels)
+  #F (32-bit floating point pixels)
+}
+
+
+def hex_argb(source, options):
+  if options.verbose > 1: print "hex_argb: %s" % source
+  im = Image.open(source)
+  (width, height) = im.size
+  if options.verbose > 0: sys.stdout.write("%s: mode=%s  width=%s  height=%s\n" % (source.name, im.mode, width, height))
+
+  if im.mode == 'P':
+    im = im.convert('RGBA')
+  formatter = pil_argb_formatters[im.mode]
+  px = im.load()
+  out = StringIO()
+  for y in range(height):
+    for x in range(width):
+      c = px[x, y]
+      out.write(formatter(c))
+      out.write(' ')
+    out.write("\n")
+  print out.getvalue()
+  out.close()
+
+
+def hex_rgb(source, options):
+  if options.verbose > 1: print "hex_rgb: %s" % source
+  im = Image.open(source)
+  (width, height) = im.size
+  if options.verbose > 0: sys.stdout.write("%s: mode=%s  width=%s  height=%s\n" % (source.name, im.mode, width, height))
+
+  formatter = pil_rgb_formatters[im.mode]
+  px = im.load()
+  out = StringIO()
+  for y in range(height):
+    for x in range(width):
+      c = px[x, y]
+      #out.write("%d:" % x)
+      out.write(formatter(c))
+      out.write(' ')
+    out.write("\n")
+
+  sys.stdout.write(out.getvalue()) # TODO?
+  out.close()
+
+
+
+def info(source, options):
+  if options.verbose > 1: print "info: %s " % source
+
+if __name__ == "__main__":
+  options = args_parser.parse_args()
+  #die_usage('test')
+  if options.verbose > 1: print vars(options)
+
+  file_generator = file_opener(options.filenames)
+  file_processor = info
+
+  if options.hexargb:
+    #for filename in options.filenames:
+    #  hex_argb(filename, options)
+    file_processor = hex_argb
+
+  elif options.hexrgb:
+    #for filename in options.filenames:
+    #  hex_rgb(filename, options)
+    file_processor = hex_rgb
+
+  else:  # even if --info hasn't been specified, just do it.
+    #for filename in options.filenames:
+    #  info(filename, options)
+    pass
+
+  for f in file_generator():
+    file_processor(f, options)
+
