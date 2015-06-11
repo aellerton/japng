@@ -24,17 +24,20 @@ To load a file into a bitmap where each pixel is a 32-bit integer representing
 
 ## Motivation
 
-Really this library shouldn't be necessarhy. It boggles my mind that at the time
+Really this library shouldn't be necessary. It boggles my mind that at the time
 of writing (2015) there is no off-the-shelf support for APNG in Java with no native
 dependency.
 
 Even with a JNI dependency, a patched version of libpng is required. The default
 libpng does not support APNG for historical reasons that persist to this day.
 
-Look at modern Android applications and you'll see nice little animations, not
-all of which are runtime code generated. How are they done? I don't know if it is
-closed source APNG reading or GIFs. GIF animation is prevalent and will never go
-away but the lack of true alpha channels is unacceptable in a modern context.
+Modern Android applications like Gmail and the default clock/stopwatch app (at least
+on my Nexus) feature nice little animations, not all of which are runtime code 
+generated. How are they done? I don't know if it is closed source APNG reading or 
+GIFs. Looking at the manifest of some chat apps show patched libpng. 
+
+GIF animation is prevalent and will never go away but the lack of true alpha 
+channels is unacceptable in a modern context.
 
 The WebP format ought to be prevalent on Android (and elsewhere) but doesn't seem
 to be. The PNG-approved MNG format ought to be everywhere but seems to be nowhere.
@@ -42,6 +45,13 @@ Mozilla, at least, continues to support the APNG format.
 
 If you want a true alpha channel animating image format then your only real choice
 at the moment is APNG. It's an imperfect format but pretty adequate for many needs.
+
+There are a couple Java-only implementations for reading PNG files, like 
+[pngj](https://github.com/leonbloy/pngj) and [javapng](https://github.com/srbala/javapng?files=1).
+The first is pretty good and recent check-ins show APNG support but I found the
+examples limited and wasn't fond of the pixel-processing code for general purposes.
+The latter is *ancient*, last updated 10 years ago.
+
 
 ## Use Cases
 

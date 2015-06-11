@@ -5,3 +5,4 @@ build
 DEL
 .gradle
 .idea
+local.properties
