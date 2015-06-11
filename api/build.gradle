@@ -17,8 +17,10 @@ dependencies {
 jar {
     baseName = 'japng'
     manifest {
-        attributes 'Implementation-Title': 'japng (Java Animated PNG Reader, "ja-ping")',
-                   'Implementation-Version': version
+        attributes 'Implementation-Title': 'japng',
+                   'Implementation-Version': version,
+                   'Implementation-Vendor': 'https://github.com/aellerton/'
+        // 'A Java-only library for reading and processing PNG and APNG files.'
     }
 }
 

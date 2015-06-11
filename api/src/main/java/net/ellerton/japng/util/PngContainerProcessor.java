@@ -62,6 +62,7 @@ public abstract class PngContainerProcessor<ResultT> implements PngChunkProcesso
         if (null != container.currentFrame) {
             throw new IllegalStateException("Attempt to process main frame image data but an animation frame is in place");
         }
+        container.hasDefaultImage = true;
         // TODO: keep this?
     }
 

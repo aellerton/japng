@@ -1,4 +1,4 @@
-# Japng: Flexible Java-only PNG processor with APNG and Android support.
+# Japng: Flexible Java-only PNG reader with APNG and Android support.
 
 ## TL;DR
 

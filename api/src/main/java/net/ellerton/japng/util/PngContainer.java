@@ -28,6 +28,7 @@ public class PngContainer {
     public PngAnimationControl animationControl;
     public List<PngFrameControl> animationFrames;
     public PngFrameControl currentFrame;
+    public boolean hasDefaultImage = false;
 
     public PngHeader getHeader() {
         return header;
@@ -38,7 +39,7 @@ public class PngContainer {
     }
 
     public boolean isAnimated() {
-        return animationControl != null && animationControl.numFrames > 1;
+        return animationControl != null;// && animationControl.numFrames > 1;
     }
 
     /* TODO need?
