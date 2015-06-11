@@ -86,31 +86,31 @@ Does *not* support:
 
 ## PNG and APNG Specification Coverage
 
-| Key standard chunks |
-| ------------------- |
+| Key standard chunks                   |
+| ------------------------------------- |
 | IHDR                | Fully Supported |
-| PLTE                |
-| IDAT                |
-| IEND                |
+| PLTE                |                 |
+| IDAT                |                 |
+| IEND                |                 |
 |---------------------|--------------------------------------------|
-| Transparency, Gamma |
+| Transparency, Gamma                                              |
 |---------------------|---------------------------------------------|
-| gAMA                | Parsed but no processing done
-| bKGD                |
+| gAMA                | Parsed but no processing done |
+| bKGD                | |
 |---------------------|---------------------------------------------|
-| tRNS                | Fully Supported
+| tRNS                | Fully Supported |
 |---------------------|---------------------------------------------|
-| Animation
+| Animation |
 |---------------------|---------------------------------------------|
-| acTL                | Fully Supported
-| fcTL                |
-| fdAT                |
+| acTL                | Fully Supported |
+| fcTL                | |
+| fdAT                | |
 |---------------------|---------------------------------------------|
-| Other
+| Other |
 |---------------------|---------------------------------------------|
-| text and others     | Processor recognises and you can process
-|                     | them yourself but this library does
-|                     | nothing with them.
+| text and others     | Processor recognises and you can process |
+|                     | them yourself but this library does |
+|                     | nothing with them. |
 +---------------------|---------------------------------------------|
 
 
