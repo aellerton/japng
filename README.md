@@ -4,7 +4,7 @@
 
 A Java-only library for reading and processing PNG and APNG files.
 
-Pronounced "jah-ping" or "yah-ping".
+Named for "Java Animated PNG". Pronounced "jah-ping" or "yah-ping".
 
 Copyright (C) 2015 Andrew Ellerton
 
@@ -20,6 +20,17 @@ To load a file into a bitmap where each pixel is a 32-bit integer representing
     ...
     
     Argb8888Bitmap bitmap = Png.readArgb8888Bitmap(new FileInputStream("foo.png"));
+
+For Android support, see the [japng_android](https://github.com/aellerton/japng_android) library that builds on ``japng``.
+
+
+## Note
+
+The library is not yet published to any Maven/Ivy repo. To use it, for now:
+
+    $ cd japng
+    $ gradle jar
+    $ cp api/build/libs/japng-0.5.jar /wherever/your/app/lib
 
 
 ## Motivation
