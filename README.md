@@ -72,8 +72,8 @@ useful.
 
 Some ideas:
 
-- rendering animated PNGs from any input source on Android
-- analysing the contents of any given PNG source
+- rendering animated PNGs from any input source on Android [(Done! See ``japng_android``)](https://github.com/aellerton/japng_android)
+- analysing the contents of any given PNG source [(Example command line client included)](https://github.com/aellerton/japng/blob/master/sample_cli/src/main/java/net/ellerton/japng/PngInfo.java)
 - processing PNG files with custom chunks, e.g. Fireworks PNG files.
 
 
