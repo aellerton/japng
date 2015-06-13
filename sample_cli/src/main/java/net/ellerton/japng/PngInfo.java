@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Read named PNG filenames and dump information to console.
+ * Dump basic information about named PNG files to console.
  */
 public class PngInfo {
     static class Config {
@@ -31,7 +31,6 @@ public class PngInfo {
             return verbosity > 0;
         }
     }
-
 
     public static void main(String[] args) {
         Config config = new Config();
@@ -106,8 +105,5 @@ public class PngInfo {
         } catch (PngException e) {
             System.err.println(filename+": PNG error: "+e.getMessage());
         }
-
     }
-
-
 }
