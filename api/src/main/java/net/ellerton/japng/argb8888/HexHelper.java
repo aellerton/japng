@@ -1,4 +1,4 @@
-package net.ellerton.japng.util;
+package net.ellerton.japng.argb8888;
 
 import net.ellerton.japng.argb8888.Argb8888Bitmap;
 

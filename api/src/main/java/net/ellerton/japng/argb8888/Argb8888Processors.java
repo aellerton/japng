@@ -81,8 +81,15 @@ public class Argb8888Processors {
                 }
 
             case PNG_TRUECOLOUR_WITH_ALPHA:
-                if (header.bitDepth != 8) throw new PngFeatureException(String.format("Only 8-bit truecolour is supported, not %d", header.bitDepth));
-                return new Truecolour8Alpha(bytesPerScanline, bitmap);
+                switch (header.bitDepth) {
+                    case 8:
+                        return new Truecolour8Alpha(bytesPerScanline, bitmap);
+                    case 16:
+                        return new Truecolour16Alpha(bytesPerScanline, bitmap);
+                    default:
+                        throw new PngIntegrityException(String.format("Invalid truecolour with alpha bit-depth: %d", header.bitDepth)); // TODO: should be in header parse.
+
+                }
 
             default:
                 throw new PngFeatureException("ARGB8888 doesn't support PNG mode "+header.colourType.name());
@@ -396,4 +403,42 @@ public class Argb8888Processors {
         }
     }
 
+
+    /**
+     * Transforms true-colour with alpha (RGBA) 16-bit source pixels to ARGB8888 pixels.
+     *
+     * Note that the simpler method of resampling the colour is done, namely discard the LSB.
+     */
+    public static class Truecolour16Alpha extends Argb8888ScanlineProcessor {
+        public Truecolour16Alpha(int bytesPerScanline, Argb8888Bitmap bitmap) {
+            super(bytesPerScanline, bitmap);
+        }
+
+        @Override
+        public void processScanline(byte[] srcBytes, int srcPosition) {
+            final int[] destArray= this.bitmap.array;
+            final int width = this.bitmap.width;
+            //final int alpha = 0xff000000; // No alpha in the image means every pixel must be fully opaque
+            int writePosition = this.y * width;
+            //srcPosition++; // skip filter byte
+            for (int x=0; x< width; x++) {
+                final int r = 0xff & srcBytes[srcPosition];
+                srcPosition += 2; // skip the byte just read and the least significant byte of the next
+                final int g = 0xff & srcBytes[srcPosition];
+                srcPosition += 2; // ditto
+                final int b = 0xff & srcBytes[srcPosition];
+                srcPosition += 2; // ditto again
+                final int alpha = 0xff & srcBytes[srcPosition];
+                srcPosition += 2; // skip the byte just read and the least significant byte of the next
+                final int c = alpha << 24 | r << 16 | g << 8 | b;
+                destArray[writePosition++] = c;
+            }
+            this.y++;
+        }
+
+        @Override
+        public Argb8888ScanlineProcessor clone(int bytesPerRow, Argb8888Bitmap bitmap) {
+            return new Truecolour16(bytesPerRow, bitmap);
+        }
+    }
 }

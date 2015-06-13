@@ -3,6 +3,7 @@ package net.ellerton.japng;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import net.ellerton.japng.argb8888.Argb8888BitmapSequence;
+import net.ellerton.japng.argb8888.HexHelper;
 import net.ellerton.japng.chunks.PngFrameControl;
 import net.ellerton.japng.error.PngException;
 import net.ellerton.japng.map.PngChunkMap;
@@ -15,15 +16,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Dump basic information about named PNG files to console.
+ * Convert named PNG files to text files of hex colours.
+ *
+ * ** NOT YET COMPLETE **
  */
-public class PngInfo {
+public class PngHex {
     static class Config {
         @Parameter(names = { "-v", "-verbose" }, description = "Level of verbosity")
         private Integer verbosity = 0;
 
         @Parameter(names = { "-h", "--help"}, description = "Show help", help = true)
         private boolean help;
+
+        @Parameter(names = { "-f", "--frames"}, description = "Decode animation frames")
+        private boolean frames = true;
+
+        @Parameter(names = { "-d", "--defaultimage"}, description = "Decode default image")
+        private boolean defaultImage = true;
+
+        @Parameter(names = { "--rgb"}, description = "Format as RRGGBB")
+        private boolean formatRgb = true;
+
+        @Parameter(names = { "--argb"}, description = "Format as AARRGGBB")
+        private boolean formatArgb = false;
 
         @Parameter(description = "<filename> ....")
         private List<String> filenames = new ArrayList<String>();
@@ -58,7 +73,7 @@ public class PngInfo {
             return;
         }
         try (FileInputStream fis = new FileInputStream(f)) {
-            PngContainer info = Png.readContainer(fis);
+            Argb8888BitmapSequence info = Png.readArgb8888BitmapSequence(fis);
             System.out.println(String.format("%s: PNG type %d (%s)", filename, info.header.colourType.code, info.header.colourType.name));
             if (config.verbose()) {
                 System.out.println(String.format("%s: %s", filename, info.header.colourType.descriptino));
@@ -73,31 +88,37 @@ public class PngInfo {
             }
             System.out.println(String.format("%s: animated? %s", filename, info.isAnimated() ? "yes" : "no"));
             if (info.isAnimated()) {
-                int n = info.animationControl.numFrames;
-                System.out.println(String.format("%s: animation frames: %d", filename, n));
-                System.out.println(String.format("%s: animation repeats: %s", filename, info.animationControl.loopForever() ? "infinite" : ""+info.animationControl.numPlays));
-                System.out.println(String.format("%s: default image before animation: %s", filename, info.hasDefaultImage ? "yes" : "no"));
+                if (info.hasDefaultImage()) {
+                    System.out.println("default image:");
+                    System.out.println(HexHelper.columnsToRgbHex(info.defaultImage));
+                }
+                List<Argb8888BitmapSequence.Frame> frames = info.getAnimationFrames();
+                int n = frames.size();
+//                System.out.println(String.format("%s: animation frames: %d", filename, n));
+//                System.out.println(String.format("%s: animation repeats: %s", filename, info.animationControl.loopForever() ? "infinite" : ""+info.animationControl.numPlays));
+//                System.out.println(String.format("%s: default image before animation: %s", filename, info.hasDefaultImage ? "yes" : "no"));
                 int i=0;
-                for (PngFrameControl frame : info.animationFrames) {
+                for (Argb8888BitmapSequence.Frame frame : frames) {
                     i++;
-                    System.out.println(String.format("%s: frame %2d of %2d: size %d x %d pixels", filename, i, n, frame.width, frame.height));
-                    System.out.println(String.format("%s: frame %2d of %2d: position %d, %d", filename, i, n, frame.xOffset, frame.yOffset));
-                    System.out.println(String.format("%s: frame %2d of %2d: duration %d/%d = %d milliseconds", filename, i, n, frame.delayNumerator, frame.delayDenominator, frame.getDelayMilliseconds()));
-                    System.out.println(String.format("%s: frame %2d of %2d: dipose = %s", filename, i, n, frame.disposeOp));
-                    System.out.println(String.format("%s: frame %2d of %2d: blend = %s", filename, i, n, frame.blendOp));
+                    System.out.println(String.format("%s: frame %2d of %2d: size %d x %d pixels", filename, i, n, frame.bitmap.width, frame.bitmap.height));
+                    System.out.println(HexHelper.columnsToRgbHex(frame.bitmap));
+//                    System.out.println(String.format("%s: frame %2d of %2d: position %d, %d", filename, i, n, frame.xOffset, frame.yOffset));
+//                    System.out.println(String.format("%s: frame %2d of %2d: duration %d/%d = %d milliseconds", filename, i, n, frame.delayNumerator, frame.delayDenominator, frame.getDelayMilliseconds()));
+//                    System.out.println(String.format("%s: frame %2d of %2d: dipose = %s", filename, i, n, frame.disposeOp));
+//                    System.out.println(String.format("%s: frame %2d of %2d: blend = %s", filename, i, n, frame.blendOp));
                 }
-                i = 0;
-                n = info.chunks.size();
-                for (PngChunkMap chunk : info.chunks) {
-                    i++;
-                    System.out.println(String.format("%s: chunk %2d of %2d: %s at %7d for %7d bytes (%s, %s, %s, %s)",
-                            filename, i, n, chunk.code.letters, chunk.dataPosition, chunk.dataLength,
-                            chunk.code.isAncillary() ? "ancillary" : "critical",
-                            chunk.code.isPrivate() ? "private" : "public",
-                            chunk.code.isReserved() ? "reserved" :"not reserved",
-                            chunk.code.isSafeToCopy() ? "safe-to-copy" : "not safe to copy"
-                            ));
-                }
+//                i = 0;
+//                n = info.chunks.size();
+//                for (PngChunkMap chunk : info.chunks) {
+//                    i++;
+//                    System.out.println(String.format("%s: chunk %2d of %2d: %s at %7d for %7d bytes (%s, %s, %s, %s)",
+//                            filename, i, n, chunk.code.letters, chunk.dataPosition, chunk.dataLength,
+//                            chunk.code.isAncillary() ? "ancillary" : "critical",
+//                            chunk.code.isPrivate() ? "private" : "public",
+//                            chunk.code.isReserved() ? "reserved" :"not reserved",
+//                            chunk.code.isSafeToCopy() ? "safe-to-copy" : "not safe to copy"
+//                            ));
+//                }
             } else {
                 // nop
             }

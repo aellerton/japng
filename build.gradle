@@ -11,7 +11,7 @@ subprojects {
         testCompile 'junit:junit:4.12'
     }
 
-    version = '0.5'
+    version = '0.5.1'
     
     sourceCompatibility = 1.7
     targetCompatibility = 1.7

@@ -96,8 +96,8 @@ public class Argb8888Processor<ResultT> implements PngChunkProcessor<ResultT> { 
 
     @Override
     public void processDefaultImageData(InputStream inputStream, PngChunkCode code, int position, int length) throws IOException, PngException {
-        //super.processDefaultImageData(inputStream, code, position, length);
         if (!builder.wantDefaultImage()) {
+            inputStream.skip(length); // important!
             return;
         }
 
@@ -140,6 +140,7 @@ public class Argb8888Processor<ResultT> implements PngChunkProcessor<ResultT> { 
     public void processFrameImageData(InputStream inputStream, PngChunkCode code, int position, int length) throws IOException, PngException {
         //throw new PngFeatureException("PngArgb8888Processor does not support animation frames");
         if (!builder.wantAnimationFrames()) {
+            inputStream.skip(length);
             return;
         }
 

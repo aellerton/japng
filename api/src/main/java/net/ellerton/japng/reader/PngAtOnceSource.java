@@ -83,10 +83,10 @@ public class PngAtOnceSource implements PngSource {
 //        return sourceDescription;
 //    }
 
-    @Override
-    public ByteArrayInputStream getBis() {
-        return bis;
-    }
+//    @Override
+//    public ByteArrayInputStream getBis() {
+//        return bis;
+//    }
 
     @Override
     public DataInputStream getDis() {
@@ -94,10 +94,12 @@ public class PngAtOnceSource implements PngSource {
     }
 
     @Override
-    public InputStream slice(int dataLength) {
+    public InputStream slice(int dataLength) throws IOException {
         // The below would be fine but in this case we have the full byte stream anyway...
         //return ByteStreams.limit(bis, dataLength);
-        return new ByteArrayInputStream(bytes, tell(), dataLength);
+        InputStream slice = new ByteArrayInputStream(bytes, tell(), dataLength);
+        this.skip(dataLength);
+        return slice;
     }
 
     public static PngAtOnceSource from(InputStream is) throws IOException {

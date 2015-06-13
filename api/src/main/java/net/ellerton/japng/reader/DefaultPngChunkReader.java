@@ -33,9 +33,17 @@ public class DefaultPngChunkReader<ResultT> implements PngChunkReader<ResultT> {
     public boolean readChunk(PngSource source, int code, int dataLength) throws PngException, IOException {
         int dataPosition = source.tell(); // note the start position before any further reads are done.
 
+        if (dataLength < 0) {
+            throw new PngIntegrityException(String.format("Corrupted read (Data length %d)", dataLength));
+        }
+
         switch(code) {
             case PngConstants.IHDR_VALUE:
                 readHeaderChunk(source, dataLength);
+                break;
+
+            case PngConstants.IEND_VALUE:
+                // NOP
                 break;
 
             case PngConstants.gAMA_VALUE:
@@ -161,6 +169,7 @@ public class DefaultPngChunkReader<ResultT> implements PngChunkReader<ResultT> {
         switch (animationType) {
             case ANIMATED_DISCARD_DEFAULT_IMAGE:
                 // do nothing
+                source.skip(dataLength);
                 break;
             case ANIMATED_KEEP_DEFAULT_IMAGE:
                 processor.processFrameImageData(source.slice(dataLength), PngChunkCode.IDAT, source.tell(), dataLength);
@@ -171,7 +180,7 @@ public class DefaultPngChunkReader<ResultT> implements PngChunkReader<ResultT> {
                 processor.processDefaultImageData(source.slice(dataLength), PngChunkCode.IDAT, source.tell(), dataLength);
                 break;
         }
-        source.skip(dataLength);
+//        source.skip(dataLength);
     }
 
     @Override
@@ -223,7 +232,6 @@ public class DefaultPngChunkReader<ResultT> implements PngChunkReader<ResultT> {
         }
 
         processor.processFrameControl(frame);
-        //source.skip(dataLength);
     }
 
     //public abstract void setMainImageOp(PngMainImageOp op);
@@ -254,7 +262,7 @@ public class DefaultPngChunkReader<ResultT> implements PngChunkReader<ResultT> {
 //        // TODO: skip everything except the frame sequence number
 
 
-        source.skip(dataLength);
+//        source.skip(dataLength);
     }
 
     @Override

@@ -64,6 +64,7 @@ public abstract class PngContainerProcessor<ResultT> implements PngChunkProcesso
         }
         container.hasDefaultImage = true;
         // TODO: keep this?
+        processImageDataStream(inputStream);
     }
 
     @Override
@@ -72,8 +73,12 @@ public abstract class PngContainerProcessor<ResultT> implements PngChunkProcesso
             throw new IllegalStateException("Attempt to process animation frame image data without a frame in place");
         }
         container.currentFrame.appendImageData(new PngChunkMap(code, position, length, 0));
-
         // TODO: keep this?
+        processImageDataStream(inputStream);
+    }
+
+    protected void processImageDataStream(InputStream inputStream) throws IOException, PngException {
+        inputStream.skip(inputStream.available());
     }
 
     @Override

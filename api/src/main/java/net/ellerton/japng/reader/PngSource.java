@@ -32,9 +32,9 @@ public interface PngSource {
 
 //    String getSourceDescription();
 
-    ByteArrayInputStream getBis();
+//    ByteArrayInputStream getBis();
 
     DataInputStream getDis();
 
-    InputStream slice(int dataLength);
+    InputStream slice(int dataLength) throws IOException;
 }

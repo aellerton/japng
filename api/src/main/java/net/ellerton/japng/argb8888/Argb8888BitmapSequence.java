@@ -45,8 +45,8 @@ public class Argb8888BitmapSequence {
         return defaultImageIsSet;
     }
 
-    public boolean hasAnimation() {
-        return null != animationControl && !animationFrames.isEmpty();
+    public boolean isAnimated() {
+        return null != animationControl && animationControl.numFrames > 0;
     }
 
     public PngAnimationControl getAnimationControl() {
@@ -56,6 +56,7 @@ public class Argb8888BitmapSequence {
     public List<Frame> getAnimationFrames() {
         return animationFrames;
     }
+
 
     public static class Frame {
         public final PngFrameControl control;

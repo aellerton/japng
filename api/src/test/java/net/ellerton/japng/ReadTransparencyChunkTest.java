@@ -3,7 +3,7 @@ package net.ellerton.japng;
 import net.ellerton.japng.util.IoHelper;
 import net.ellerton.japng.argb8888.Argb8888Bitmap;
 import net.ellerton.japng.error.PngException;
-import net.ellerton.japng.util.HexHelper;
+import net.ellerton.japng.argb8888.HexHelper;
 import org.junit.Test;
 
 import java.io.IOException;

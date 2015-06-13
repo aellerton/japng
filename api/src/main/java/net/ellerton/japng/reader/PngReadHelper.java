@@ -53,7 +53,8 @@ public class PngReadHelper {
                 throw new PngException(PngConstants.ERROR_NOT_PNG, "Failed to read PNG signature");
             }
 
-            PngAtOnceSource source = PngAtOnceSource.from(is);//, sourceName);
+//            PngAtOnceSource source = PngAtOnceSource.from(is);//, sourceName);
+            PngSource source = new PngStreamSource(is);
             boolean finished = false;
 
             while (!finished) {
@@ -62,7 +63,7 @@ public class PngReadHelper {
                 finished = reader.readChunk(source, code, length);
             }
 
-            if (source.available() > 0) {
+            if (source.available() > 0) { // Should trailing data after IEND always be error or can configure as warning?
                 throw new PngException(PngConstants.ERROR_EOF_EXPECTED, String.format("Completed IEND but %d byte(s) remain", source.available()));
             }
 
@@ -71,7 +72,7 @@ public class PngReadHelper {
             return reader.getResult();
 
         } catch (EOFException e) {
-            throw new PngException(PngConstants.ERROR_EOF, "Reading data and encountered unexpected EOF", e);
+            throw new PngException(PngConstants.ERROR_EOF, "Unexpected EOF", e);
         } catch (IOException e) {
             throw new PngException(PngConstants.ERROR_UNKNOWN_IO_FAILURE, e.getMessage(), e);
         }

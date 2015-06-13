@@ -14,7 +14,7 @@ import net.ellerton.japng.error.PngException;
 import net.ellerton.japng.reader.DefaultPngChunkReader;
 import net.ellerton.japng.util.PngContainerBuilder;
 import net.ellerton.japng.reader.PngReadHelper;
-import net.ellerton.japng.util.HexHelper;
+import net.ellerton.japng.argb8888.HexHelper;
 import net.ellerton.japng.util.PngContainer;
 import org.junit.Test;
 
@@ -131,7 +131,7 @@ public class ReadApngTest {
             assertEquals(8, sequence.header.bitDepth);
             assertEquals(PngColourType.PNG_TRUECOLOUR_WITH_ALPHA, sequence.header.colourType);
 
-            assertTrue(sequence.hasAnimation());
+            assertTrue(sequence.isAnimated());
             assertNotNull(sequence.getAnimationControl());
             assertTrue(sequence.getAnimationControl().loopForever());
             assertEquals(1, sequence.getAnimationControl().numFrames);
@@ -172,7 +172,7 @@ public class ReadApngTest {
 //            assertEquals(8, sequence.header.bitDepth);
             assertEquals(PngColourType.PNG_TRUECOLOUR_WITH_ALPHA, sequence.header.colourType);
 
-            assertTrue(sequence.hasAnimation());
+            assertTrue(sequence.isAnimated());
             assertNotNull(sequence.getAnimationControl());
             assertTrue(sequence.getAnimationControl().loopForever());
             assertEquals(12, sequence.getAnimationControl().numFrames);

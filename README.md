@@ -160,6 +160,14 @@ other custom chunk producer).
 
 ## History
 
-0.5.0: Initial Release. 20150611
+v0.5.0: 20150611
+- Initial Release. 
+
+v0.5.1: 20150613
+- Add PngStreamSource as alternative to PngAtOnceSource.
+- Not sure about keeping the at-once source.
+- Added first cut (incomplete!) of PngHex command-line program.
+- Added the missing 16-bit RGBA decoder.
+       
 
 ***
