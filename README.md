@@ -1,5 +1,13 @@
 # Japng: Flexible Java-only PNG reader with APNG and Android support.
 
+## NOTE: NAME WILL BE CHANGING
+
+The name of this project will change because, as Issue #1 notes, an
+[older project](https://www.reto-hoehener.ch/japng/) of the same name exists.
+Although that project is closed-source and has a different objective, having
+two somewhat similar projects with the same name will be confusing.
+
+
 ## TL;DR
 
 A Java-only library for reading and processing PNG and APNG files.
@@ -67,6 +75,8 @@ The first is pretty good and recent check-ins show APNG support but I found the
 examples limited and wasn't fond of the pixel-processing code for general purposes.
 The latter is *ancient*, last updated 10 years ago.
 
+There is also a 2009 closed-source project called ["japng"](https://www.reto-hoehener.ch/japng/) 
+that seems only to be about writing (not reading) APNG files.
 
 ## Use Cases
 
