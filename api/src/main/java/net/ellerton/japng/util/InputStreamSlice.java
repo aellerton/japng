@@ -54,7 +54,14 @@ public class InputStreamSlice extends InputStream {
             return -1;
         }
         n = Math.min(available(), n); // calculate maximum skip
-        n = src.skip(n); // attempt to skip that much
+        long remaining = n;
+        while (remaining > 0) {
+            long skipped = src.skip(remaining); // attempt to skip that much
+            if (skipped <= 0) {
+                throw new IOException("Failed to skip a total of "+n+" bytes in stream; "+remaining+" bytes remained but "+skipped+" returned from skip.");
+            }
+            remaining -= skipped;
+        }
         position += n; // adjust position by correct skip
         return n;
     }
