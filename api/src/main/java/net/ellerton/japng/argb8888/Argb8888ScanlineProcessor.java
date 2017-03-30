@@ -51,7 +51,12 @@ public abstract class Argb8888ScanlineProcessor extends BasicScanlineProcessor {
      * @return processor that will write to a new bitmap.
      */
     public Argb8888ScanlineProcessor cloneWithNewBitmap(PngHeader header) {
-        return clone(header.bytesPerRow, new Argb8888Bitmap(header.width, header.height));
+        Argb8888ScanlineProcessor cloned = clone(header.bytesPerRow, new Argb8888Bitmap(header.width, header.height));
+        if(this.palette != null){
+            cloned.setPalette(new Argb8888Palette(palette.argbArray));
+        }
+        return cloned;
+
     }
 
     /**
@@ -63,7 +68,12 @@ public abstract class Argb8888ScanlineProcessor extends BasicScanlineProcessor {
      * @return processor that will write to the same bitmap as the current processor.
      */
     public Argb8888ScanlineProcessor cloneWithSharedBitmap(PngHeader header) {
-        return clone(header.bytesPerRow, bitmap.makeView(header.width, header.height));
+        Argb8888ScanlineProcessor cloned = clone(header.bytesPerRow, bitmap.makeView(header.width, header.height));
+        if(this.palette != null){
+            cloned.setPalette(new Argb8888Palette(palette.argbArray));
+        }
+        return cloned;
+
     }
 
 //    public Argb8888ScanlineProcessor clone(int bytesPerRow, Argb8888Bitmap bitmap) {

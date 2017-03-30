@@ -20,8 +20,8 @@ public abstract class BasicArgb8888Director<ResultT> implements Argb8888Director
         if (null == palette) {
             throw new PngIntegrityException("Received tRNS data but no palette is in place");
         }
-        if (length <= 0 || length >= palette.size()) {
-            throw new PngIntegrityException(String.format("Received tRNS data length is invalid. Should be 1..%d but is %d", palette.size(), length));
+        if (length <= 0 || length > palette.size()) {
+            throw new PngIntegrityException(String.format("Received tRNS data length is invalid. Should be >1 && < %d but is %d", palette.size(), length));
         }
         for (int i=0; i < length; i++) {
             final int alpha = 0xff & bytes[position+i];
