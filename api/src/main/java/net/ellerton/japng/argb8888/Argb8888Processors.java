@@ -135,7 +135,7 @@ public class Argb8888Processors {
                 if (palette != null) {
                     dest = palette.argbArray[index];
                 } else {
-                    dest = 0x000000;
+                    dest = 0;
                 }
                 destArray[writePosition++] = dest;
                 if (bit==0) {
@@ -176,7 +176,7 @@ public class Argb8888Processors {
                 if (palette != null) {
                     dest = palette.argbArray[index];
                 } else {
-                    dest = 0x000000;
+                    dest = 0;
                 }
                 destArray[writePosition++] = dest;
             }
