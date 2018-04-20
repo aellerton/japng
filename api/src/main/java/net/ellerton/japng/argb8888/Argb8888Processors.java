@@ -131,7 +131,13 @@ public class Argb8888Processors {
                 //final int v = srcBytes[srcPosition];
                 final int index = mask & (srcBytes[srcPosition] >> shifts[bit]);
 
-                destArray[writePosition++] = palette.argbArray[index];
+                int dest;
+                if (palette != null) {
+                    dest = palette.argbArray[index];
+                } else {
+                    dest = 0x000000;
+                }
+                destArray[writePosition++] = dest;
                 if (bit==0) {
                     srcPosition++;
                     bit = highBit;
@@ -165,7 +171,14 @@ public class Argb8888Processors {
             for (int x=0; x< width; x++) {
 
                 final int index = 0xff & srcBytes[srcPosition++]; // TODO: need to use transparency and background chunks
-                destArray[writePosition++] = palette.argbArray[index];
+
+                int dest;
+                if (palette != null) {
+                    dest = palette.argbArray[index];
+                } else {
+                    dest = 0x000000;
+                }
+                destArray[writePosition++] = dest;
             }
             this.y++;
         }
